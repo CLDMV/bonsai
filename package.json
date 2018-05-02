@@ -15,7 +15,7 @@
     "url": "git+https://github.com/CLDMV/cldmv-node-image-sizer.git"
   },
   "author": "Shinrai <git@cldmv.net> (http://cldmv.net)",
-  "license": "ISC",
+  "license": "GPLv3",
   "bugs": {
     "url": "https://github.com/CLDMV/cldmv-node-image-sizer/issues"
   },
