@@ -1,40 +1,67 @@
 'use strict'
 
-	const 	jimp = require('jimp'),
-			deepmerge = require('deepmerge'),
-			fs = require('fs');
+	const 	image_sizer = require('./lib/image_sizer.js'),
+			fs = require('fs'),
+			jimp = require('jimp');
 
-	const default_config = require("./.image-sizer.json");
+	const pkg = require("./package.json");
 	
 	var args = process.argv.slice(2);
-	var rule = false;
-	var working_config = {};
-	var config = {};
 	var files = [];
-	var configpath = process.cwd() + "/.image-sizer.json";
-
-	function help() {
+	
+	function error_rules() {
 		var usage = [
 			''
-		  , '  Usage: image-sizer [options] [file(s)]'
+		  , '  Usage: -r rule_name'
 		  , ''
-		  , '  Options:'
+		  , '  Requirements:'
 		  , ''
-		  , '    -r, --rule              Sets which Config Rule to follow'
-		  , '    -c, --config            Sets what config file to use'
-		  , '    -p, --print             Print output of actions to screen'
-		  , '    -V, --version           Display the version of CLDMV Image Sizer'
-		  , '    -h, --help              Display help information'
+		  , '    Rules must contain one of the following sets: '
+		  , '      An array of numbers'
+		  , '        Example:'
+		  , '          [1024,1024]'
+		  , '          [256,96]'
+		  , ''
+		  , '      An array of objects'
+		  , '        Example:'
+		  , '          ['
+		  , '            {'
+		  , '              x: 1024,'
+		  , '              y: 1024'
+		  , '            },'
+		  , '            {'
+		  , '              x: 256,'
+		  , '              y: 96'
+		  , '            }'
+		  , '          ]'
+		  , ''
+		  , '      An array of arrays'
+		  , '        Example:'
+		  , '          ['
+		  , '            ['
+		  , '              1024,'
+		  , '              1024'
+		  , '            ],'
+		  , '            ['
+		  , '              256,'
+		  , '              96'
+		  , '            ]'
+		  , '          ]'
+		  , ''
+		  , '    Note: Objects and arrays can be mixed in the 2 last examples'
+		  , ''
+		  , '    For more examples use the -e [--example] command'
 		  , ''
 		].join('\n');
 		console.error(usage);
 	}
 	
+	console.log('args');
 	console.log(args);
 	
 	if (args.length == 0) {
-		help();
-		// return;
+		image_sizer.help.commands();
+		return;
 	}
 	
 	var arg;
@@ -43,82 +70,54 @@
 		switch (arg) {
 			case '-h':
 			case '--help':
-			help();
-			// return;
-			break;
-		case '-r':
-		case '--rule':
-			rule = args.shift();
-			break;
-		case '-c':
-		case '--config':
-			configpath = process.cwd() + '/./' + args.shift();
-			break;
-		case '-p':
-		case '--print':
-			config.print = true;
-			break;
-		case '-V':
-		case '--version':
-			console.log(stylus.version);
-			return;
-		default:
-			files.push(arg);
-		}
-	}
-
-	if (fs.existsSync(configpath)) {
-		working_config = require(configpath);
-	}
-
-	if (typeof working_config.rules != "undefined") {
-		config = deepmerge(default_config, working_config);
-	} else {
-		config = deepmerge(default_config, {});
-		if (typeof working_config.type != "undefined") {
-			config.rules = deepmerge(config.rules, working_config);
-		} else {
-			var t = working_config;
-			working_config = {
-				"tmp": t
-			};
-			config.rules = deepmerge(config.rules, working_config);
-		}
-	}
-
-	if (rule) {
-		rule = rule.toLowerCase();
-		console.log('rule');
-		console.log(rule);
-		var tmprules = {};
-		Object.keys(config.rules).forEach(function(r) {
-			tmprules[r.toLowerCase()] = config.rules[r];
-		});
-		config.rules = tmprules;
-		var found_rule = false;
-		if (typeof config.rules[rule] == "undefined") {
-			Object.keys(config.rules).forEach(function(r) {
-				if (typeof config.rules[r].alias != "undefined") {
-					config.rules[r].alias.forEach(function(e,a) {
-						if (e.toLowerCase() == rule) {
-							found_rule = config.rules[r];
-						}
-					});
+				image_sizer.help.commands();
+				return;
+				break;
+			case '-e':
+			case '--example':
+				var e = args.shift();
+				if (!image_sizer.help.example(e)) {
+					image_sizer.help.commands();
+					return;
 				}
-			});
-		} else {
-			found_rule = config.rules[rule];
+				return;
+				break;
+			case '-r':
+			case '--rule':
+				image_sizer.config.rule = args.shift();
+				break;
+			case '-c':
+			case '--config':
+				image_sizer.config.path = process.cwd() + '/./' + args.shift();
+				break;
+			case '-p':
+			case '--print':
+				image_sizer.config.print = true;
+				break;
+			case '-v':
+			case '--version':
+				image_sizer.help.version();
+				return;
+			default:
+				files.push(arg);
 		}
-		if (found_rule !== false) {
-			console.log('found_rule');
-			console.log(found_rule);
-		} else {
-			help();
-			// return;			
-		}
-	} else {
-		help();
-		// return;
 	}
-	console.log('config');
-	console.log(config);
+	
+	if (!image_sizer.config.process()) {
+		image_sizer.help.commands();
+		return;
+	} else {
+		if (!image_sizer.rules.process(image_sizer.config)) {
+			image_sizer.help.commands();
+			return;
+		}
+	}
+	
+	// if (rule) {
+		// rule = rule.toLowerCase();
+	// } else {
+		// image_sizer.help.commands();
+		// return;
+	// }
+	// console.log('config');
+	// console.log(config);
