@@ -1,7 +1,6 @@
 {
 	"rules": {
 		"squarepx": {
-			"type": "px",
 			"values": [
 				{
 					"x": 2048,
@@ -46,7 +45,6 @@
 			]
 		},
 		"percent": {
-			"type": "percent",
 			"values": [
 				100,
 				50,

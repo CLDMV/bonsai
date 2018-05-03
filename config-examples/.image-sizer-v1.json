@@ -1,5 +1,5 @@
 {
-	"squarepx": {
+	"squarepxv1": {
 		"type": "px",
 		"values": [
 			{
@@ -44,7 +44,7 @@
 			}
 		]
 	},
-	"percent": {
+	"percentv1": {
 		"type": "percent",
 		"values": [
 			100,
