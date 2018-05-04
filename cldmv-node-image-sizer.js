@@ -44,8 +44,12 @@
 			case '--rule':
 				var next = args[0];
 				while (cldmv_image_sizer.maybeAdditionalArg(next)) {
+					// console.log('next1');
+					// console.log(next);
 					cldmv_image_sizer.config.addParseRule(args.shift());
 					next = args[0];
+					// console.log('next2');
+					// console.log(next);
 				}
 				break;
 			case '-c':
@@ -65,7 +69,8 @@
 				cldmv_image_sizer.help.version();
 				return;
 			default:
-				files.push(arg);
+				// console.log(arg);
+				cldmv_image_sizer.config.addFile(arg);
 		}
 	}
 	
