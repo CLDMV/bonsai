@@ -3,25 +3,28 @@
 	global.define = function define(name, value) {
 		global[name] = value;
 	}
-	
-	const 	cldmv_image_sizer = require('./lib/cldmv_image_sizer.js'),
-			fs = require('fs'),
-			jimp = require('jimp');
-			
+
+	var cldmv_image_sizer = false;
+
 	define('cldmv_image_sizer', cldmv_image_sizer);
 
+	cldmv_image_sizer = require('./lib/cldmv_image_sizer.js');
+
+	const 	fs = require('fs'),
+			jimp = require('jimp');
+
 	const pkg = require("./package.json");
-	
+
 	var args = process.argv.slice(2);
 	var files = [];
-	
+
 	if (args.length == 0) {
 		cldmv_image_sizer.help.commands();
 		return;
 	}
-	
+
 	var arg;
-	
+
 	while (args.length) {
 		arg = args.shift();
 		switch (arg) {
@@ -48,8 +51,6 @@
 					// console.log(next);
 					cldmv_image_sizer.config.addParseRule(args.shift());
 					next = args[0];
-					// console.log('next2');
-					// console.log(next);
 				}
 				break;
 			case '-c':
@@ -69,9 +70,8 @@
 				cldmv_image_sizer.help.version();
 				return;
 			default:
-				// console.log(arg);
 				cldmv_image_sizer.config.addFile(arg);
 		}
 	}
-	
+
 	cldmv_image_sizer.run();
