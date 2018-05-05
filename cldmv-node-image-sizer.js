@@ -47,9 +47,7 @@
 			case '--rule':
 				var next = args[0];
 				while (cldmv_image_sizer.maybeAdditionalArg(next)) {
-					// console.log('next1');
-					// console.log(next);
-					cldmv_image_sizer.config.addParseRule(args.shift());
+					cldmv_image_sizer.config.addCLIRule(args.shift());
 					next = args[0];
 				}
 				break;
@@ -64,6 +62,15 @@
 			case '-p':
 			case '--print':
 				cldmv_image_sizer.config.enablePrint();
+				break;
+			case '-t':
+			case '--tinify':
+				var next = args[0];
+				if (cldmv_image_sizer.maybeAdditionalArg(next)) {
+					cldmv_image_sizer.config.enableTinify(args.shift());
+				} else {
+					cldmv_image_sizer.config.enableTinify();
+				}
 				break;
 			case '-v':
 			case '--version':
