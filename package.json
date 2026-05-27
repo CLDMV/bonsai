@@ -22,7 +22,7 @@
   "homepage": "https://github.com/CLDMV/cldmv-node-image-sizer#readme",
   "dependencies": {
     "deepmerge": "^2.1.0",
-    "jimp": "^0.2.28",
+    "jimp": "^1.6.1",
     "tinify": "^1.5.0"
   }
 }
